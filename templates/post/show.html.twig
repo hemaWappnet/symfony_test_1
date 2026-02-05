@@ -1,0 +1,55 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ post.title }}{% endblock %}
+
+{% block body %}
+<div class="container" style="padding-top: 2rem; padding-bottom: 2rem;">
+    <article class="card">
+        <h1 class="post-title">{{ post.title }}</h1>
+        <div class="post-content">{{ post.content|nl2br }}</div>
+        <div class="post-meta">
+            Created: {{ post.createdAt|date('M j, Y \a\t g:i A') }} |
+            Updated: {{ post.updatedAt|date('M j, Y \a\t g:i A') }}
+        </div>
+    </article>
+
+    {% for message in app.flashes('error') %}
+    <div class="alert alert-error">
+        {{ message }}
+    </div>
+    {% endfor %}
+
+    {% for message in app.flashes('success') %}
+    <div class="alert alert-success">
+        {{ message }}
+    </div>
+    {% endfor %}
+
+    <div class="card">
+        <h2 class="section-title">Comments ({{ post.comments|length }})</h2>
+
+        {% for comment in post.comments %}
+        <div class="comment">
+            <div class="comment-date">{{ comment.createdAt|date('M j, Y \a\t g:i A') }}</div>
+            <div>{{ comment.content|nl2br }}</div>
+        </div>
+        {% endfor %}
+
+        <div class="mt-8">
+            <h3 class="section-title">Add a Comment</h3>
+            <form action="{{ path('app_comment_create', {id: post.id}) }}" method="post">
+                <input type="hidden" name="_token" value="{{ csrf_token('comment') }}" />
+                <div class="form-group">
+                    <label for="content" class="form-label">Your Comment</label>
+                    <textarea name="content" id="content" rows="4" class="form-input form-textarea" placeholder="Share your thoughts..." required></textarea>
+                </div>
+                <button type="submit" class="btn btn-success">Post Comment</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="text-center mt-8">
+        <a href="{{ path('app_home') }}" class="btn btn-primary">Back to Posts</a>
+    </div>
+</div>
+{% endblock %}
